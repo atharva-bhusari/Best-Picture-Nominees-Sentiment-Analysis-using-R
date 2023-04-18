@@ -1,4 +1,5 @@
 library(pdftools)
+library(tidyverse)
 
 make_scripts = function(pdf_urls, movie_mapping) {
   
