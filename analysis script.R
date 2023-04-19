@@ -88,3 +88,16 @@ head(maverick_surprise)
 maverick_trust <- maverick %>% inner_join(nrc_trust) %>% 
   count(word, sort = TRUE)
 head(maverick_trust)
+
+#######################################################################
+#
+# Using bing
+#
+###############################################################################
+
+bing_positive <- get_sentiments("bing") %>% filter(sentiment == 'positive')
+bing_negative <- get_sentiments("bing") %>% filter(sentiment == 'negative')
+
+
+maverick_bing_positive
+
