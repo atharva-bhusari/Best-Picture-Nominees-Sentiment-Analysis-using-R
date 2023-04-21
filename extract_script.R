@@ -59,7 +59,8 @@ pdf_urls = c("https://deadline.com/wp-content/uploads/2022/01/Nightmare-Alley-Re
              "https://deadline.com/wp-content/uploads/2022/01/Belfast-Read-The-Screenplay_Redacted.pdf",
              "https://deadline.com/wp-content/uploads/2022/01/The-Power-Of-The-Dog-Read-The-Screenplay.pdf",
              "https://deadline.com/wp-content/uploads/2022/01/West-Side-Story-Read-The-Screenplay.pdf",
-             "https://deadline.com/wp-content/uploads/2022/01/King-Richard-Read-The-Screenplay-2.pdf")
+             "https://deadline.com/wp-content/uploads/2022/01/King-Richard-Read-The-Screenplay-2.pdf",
+             "https://deadline.com/wp-content/uploads/2022/01/CODA-Read-The-Screenplay-1.pdf")
 
 movie_mapping = c('1' = 'Nightmare Alley',
                   '2' = 'Dont Look Up',
@@ -67,7 +68,8 @@ movie_mapping = c('1' = 'Nightmare Alley',
                   '4' = 'Belfast',
                   '5' = 'The Power of the Dog',
                   '6' = 'West Side Story',
-                  '7' = 'King Richard')
+                  '7' = 'King Richard',
+                  '8' = 'CODA')
 
 scripts_2022 = make_scripts(pdf_urls, movie_mapping)
 
