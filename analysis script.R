@@ -12,92 +12,103 @@ library(ggplot2)
 movies_2023 <- scripts_2023 %>% group_by(movie) %>% 
   summarise(total_lines = n())
 
+head(movies_2023)
 
-maverick <- scripts_2023 %>%  filter(.$movie == "Top Gun: Maverick")
-maverick <- maverick[,-2]
-
-maverick <- maverick %>% unnest_tokens(word, line) %>% 
+clean_scripts_2023 <- scripts_2023 %>% unnest_tokens(word, line) %>% 
   mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
   anti_join(stop_words)
 
-View(maverick)
+clean_scripts_2022 <- scripts_2022 %>% unnest_tokens(word, line) %>% 
+  mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
+  anti_join(stop_words)
 
-#######################################################################
-#
-# Using NRC
-#
-###############################################################################
+clean_scripts_2021 <- scripts_2021 %>% unnest_tokens(word, line) %>% 
+  mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
+  anti_join(stop_words)
 
-nrc_anger <- get_sentiments("nrc") %>% filter(sentiment == 'anger')
+clean_scripts_2020 <- scripts_2020 %>% unnest_tokens(word, line) %>% 
+  mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
+  anti_join(stop_words)
 
-nrc_anticipation <- get_sentiments("nrc") %>% 
-  filter(sentiment == 'anticipation') 
+clean_scripts_2019 <- scripts_2019 %>% unnest_tokens(word, line) %>% 
+  mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
+  anti_join(stop_words)
 
-nrc_disgust <- get_sentiments("nrc") %>% filter(sentiment == 'disgust') 
+#2023
+bing_scripts_2023 <- clean_scripts_2023 %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 10) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  mutate(sentiment = positive - negative)
 
-nrc_fear <- get_sentiments("nrc") %>% filter(sentiment == 'fear') 
+ggplot(bing_scripts_2023, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity") + facet_wrap(~movie, ncol=2) +
+  geom_smooth(span=.15)+
+  theme(legend.position = "none")
 
-nrc_joy <- get_sentiments("nrc") %>% filter(sentiment == 'joy') 
+##2022
+bing_scripts_2022 <- clean_scripts_2022 %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 10) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  mutate(sentiment = positive - negative)
 
-nrc_negative <- get_sentiments("nrc") %>% filter(sentiment == 'negative') 
+ggplot(bing_scripts_2022, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity") + facet_wrap(~movie, ncol=2) +
+  geom_smooth(span=.15)+
+  theme(legend.position = "none")
 
-nrc_positive <- get_sentiments("nrc") %>% filter(sentiment == 'positive') 
+##2021
+bing_scripts_2021 <- clean_scripts_2021 %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 10) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  mutate(sentiment = positive - negative)
 
-nrc_sadness <- get_sentiments("nrc") %>% filter(sentiment == 'sadness') 
+ggplot(bing_scripts_2021, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity") + facet_wrap(~movie, ncol=2) +
+  geom_smooth(span=.15)+
+  theme(legend.position = "none")
 
-nrc_surprise <- get_sentiments("nrc") %>% filter(sentiment == 'surprise') 
+##2020
+bing_scripts_2020 <- clean_scripts_2020 %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 10) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  mutate(sentiment = positive - negative)
 
-nrc_trust <- get_sentiments("nrc") %>% filter(sentiment == 'trust') 
+ggplot(bing_scripts_2020, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity") + facet_wrap(~movie, ncol=2) +
+  geom_smooth(span=.15)+
+  theme(legend.position = "none")
 
-maverick_anger <- maverick %>% inner_join(nrc_anger) %>% 
-  count(word, sort = TRUE)
-head(maverick_anger)
+##2019
 
-maverick_anticipation <- maverick %>% inner_join(nrc_anticipation) %>% 
-  count(word, sort = TRUE)
-head(maverick_anticipation)
+bing_scripts_2019 <- clean_scripts_2019 %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 10) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  mutate(sentiment = positive - negative)
 
-maverick_disgust <- maverick %>% inner_join(nrc_disgust) %>% 
-  count(word, sort = TRUE)
-head(maverick_disgust)
-
-maverick_fear <- maverick %>% inner_join(nrc_fear) %>% 
-  count(word, sort = TRUE)
-head(maverick_fear)
-
-maverick_joy <- maverick %>% inner_join(nrc_joy) %>% 
-  count(word, sort = TRUE)
-head(maverick_joy)
-
-maverick_negative <- maverick %>% inner_join(nrc_negative) %>% 
-  count(word, sort = TRUE)
-head(maverick_negative)
-
-maverick_positve <- maverick %>% inner_join(nrc_positive) %>% 
-  count(word, sort = TRUE)
-head(maverick_positve)
-
-maverick_sadness <- maverick %>% inner_join(nrc_sadness) %>% 
-  count(word, sort = TRUE)
-head(maverick_sadness)
-
-maverick_surprise <- maverick %>% inner_join(nrc_surprise) %>% 
-  count(word, sort = TRUE)
-head(maverick_surprise)
-
-maverick_trust <- maverick %>% inner_join(nrc_trust) %>% 
-  count(word, sort = TRUE)
-head(maverick_trust)
-
-#######################################################################
-#
-# Using bing
-#
-###############################################################################
-
-bing_positive <- get_sentiments("bing") %>% filter(sentiment == 'positive')
-bing_negative <- get_sentiments("bing") %>% filter(sentiment == 'negative')
+ggplot(bing_scripts_2019, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity") + facet_wrap(~movie, ncol=2) +
+  geom_smooth(span=.15)+
+  theme(legend.position = "none")
 
 
-maverick_bing_positive
+
+
+
+
+
 

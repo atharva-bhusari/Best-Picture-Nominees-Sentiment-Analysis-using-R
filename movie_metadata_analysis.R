@@ -121,26 +121,66 @@ movies_df %>% group_by(Year) %>% summarise(mean(imdbRating)) %>%
         legend.position = "none")
 
 ###################################################################
-#
+# Average box office earning by year
 #################################################################3
 
 movies_df <- movies_df %>% 
   mutate(BoxOffice = str_remove_all(BoxOffice, "[$,]"))
 
 movies_df$BoxOffice <-as.numeric(movies_df$BoxOffice)
+movies_df$BoxOffice <- movies_df$BoxOffice/1000000
 
 
 movies_df %>% group_by(Year) %>% 
   summarise(mean(BoxOffice, na.rm=TRUE)) %>% 
   ggplot(aes(x=Year, y = `mean(BoxOffice, na.rm = TRUE)`, fill=Year)) + 
-  geom_bar(stat = "identity") + 
-  labs(x="Year", y="Average Box Office Earning",
+  geom_line(stat = "identity", aes(col="red")) + 
+  geom_point() +
+  labs(x="Year", y="Average Box Office Earning(x1000000)",
        title="Average Box Office Earning by Year") +
   theme(plot.title = element_text(hjust=0.5), 
         legend.position = "none")
 
-# TODO: Insert data for sound of metal and Judas, also scale box office
-# amount  x10 million
+# TODO: Insert data for sound of metal and Judas
+
+###################################################################
+# Average imdb votes per year
+###############################################################
+
+movies_df <- movies_df %>% 
+  mutate(imdbVotes = str_remove_all(imdbVotes, "[,]"))
+movies_df$imdbVotes <- as.numeric(movies_df$imdbVotes)
+movies_df$imdbVotes <- movies_df$imdbVotes/100000
+
+movies_df %>% group_by(Year) %>% 
+  summarise(mean(imdbVotes, na.rm=TRUE)) %>% 
+  ggplot(aes(x=Year, y = `mean(imdbVotes, na.rm = TRUE)`, fill=Year)) + 
+  geom_line(stat = "identity", aes(col="red")) + 
+  geom_point() +
+  labs(x="Year", y="Average IMDb Votes(x100000)",
+       title="Average IMDb Votes per year") +
+  theme(plot.title = element_text(hjust=0.5), 
+        legend.position = "none")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
