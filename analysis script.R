@@ -243,3 +243,29 @@ plot_1 <- ggplot(bing_winner_2019, aes(index, sentiment, fill=movie)) +
 
 ggsave("./graphs/sentiment_analysis/bing_sentiments_2019_winner.png", plot_1, 
        width = 15, height = 10, dpi=300)
+
+
+###############################################################################
+## Ngram analysis
+############################################################################
+
+bigram_scripts_2023 <- scripts_2023 %>% group_by(movie) %>%  unnest_tokens(bigram, line, 
+                                                      token = "ngrams", n=2) %>% 
+  filter(!is.na(bigram))
+
+
+bigram_scripts_2023 %>% count(bigram, sort = TRUE)
+
+bigram_scripts_2023 <- bigram_scripts_2023 %>% 
+  separate(bigram, c("word1","word2"), sep = " ") %>% 
+  filter(!word1 %in% stop_words$word) %>% 
+  filter(!word2 %in% stop_words$word) %>% 
+  unite(bigram, word1, word2, sep = " ")
+
+bigram_scripts_2023 %>% count(bigram, sort = TRUE)
+
+
+
+
+
+
