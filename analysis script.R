@@ -48,7 +48,9 @@ plot_1 <- ggplot(bing_scripts_2023, aes(index, sentiment, fill=movie)) +
   geom_smooth(span=.15)+ 
   labs(title = "Sentiments through the Movies of 2023") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5))
+        plot.title = element_text(hjust = 0.5, size = 25),
+        strip.text = element_text(size = 15),
+        axis.title = element_text(size = 15))
 ggsave("./graphs/sentiment_analysis/bing_sentiments_2023.png", plot_1, 
        width = 15, height = 10, dpi=300)
 
@@ -66,7 +68,9 @@ plot_1<- ggplot(bing_scripts_2022, aes(index, sentiment, fill=movie)) +
   geom_smooth(span=.15) + 
   labs(title = "Sentiments through the Movies of 2022") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5))
+        plot.title = element_text(hjust = 0.5, size = 25),
+        strip.text = element_text(size = 15),
+        axis.title = element_text(size = 15))
 
 
 ggsave("./graphs/sentiment_analysis/bing_sentiments_2022.png", plot_1, 
@@ -86,7 +90,9 @@ plot_1 <- ggplot(bing_scripts_2021, aes(index, sentiment, fill=movie)) +
   geom_smooth(span=.15) + 
   labs(title = "Sentiments through the Movies of 2021") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5))
+        plot.title = element_text(hjust = 0.5, size = 25),
+        strip.text = element_text(size = 15),
+        axis.title = element_text(size = 15))
 ggsave("./graphs/sentiment_analysis/bing_sentiments_2021.png", plot_1, 
        width = 15, height = 10, dpi=300)
 
@@ -104,7 +110,9 @@ plot_1 <- ggplot(bing_scripts_2020, aes(index, sentiment, fill=movie)) +
   geom_smooth(span=.15)+ 
   labs(title = "Sentiments through the Movies of 2020") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5))
+        plot.title = element_text(hjust = 0.5, size=25),
+        strip.text = element_text(size = 15),
+        axis.title = element_text(size = 15))
 
 ggsave("./graphs/sentiment_analysis/bing_sentiments_2020.png", plot_1, 
        width = 15, height = 10, dpi=300)
@@ -124,7 +132,9 @@ plot_1 <- ggplot(bing_scripts_2019, aes(index, sentiment, fill=movie)) +
   geom_smooth(span=.15)+ 
   labs(title = "Sentiments through the Movies of 2019") +
   theme(legend.position = "none", 
-        plot.title = element_text(hjust=0.5))
+        plot.title = element_text(hjust=0.5, size = 25),
+        strip.text = element_text(size = 15),
+        axis.title = element_text(size=15))
 
 ggsave("./graphs/sentiment_analysis/bing_sentiments_2019.png", plot_1, 
        width = 15, height = 10, dpi=300)
@@ -145,14 +155,15 @@ bing_winner_2023 <- clean_scripts_2023 %>%
   replace_na(.,list(positive=0, negative=0)) %>% 
   mutate(sentiment = positive - negative)
 
-plot_1 <- ggplot(bing_winner_2023, aes(index, sentiment, fill=movie)) + 
-  geom_bar(stat = "identity") +
-  geom_smooth(span=.15) + 
+plot_1 <- ggplot(bing_winner_2023, aes(index, sentiment)) + 
+  geom_bar(stat = "identity", fill="#93AA00") +
+  geom_smooth(span=.15, fill="#93AA00") + 
   labs(title = "Sentiments through Everything Everywhere All at Once") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5))
+        plot.title = element_text(hjust = 0.5, size=25),
+        axis.title = element_text(size=15))
 
-ggsave("./graphs/sentiment_analysis/bing_sentiments_2023_winner.png", plot_1, 
+ggsave("./graphs/Winner/bing_sentiments_2023_winner.png", plot_1, 
        width = 15, height = 10, dpi=300)
 
 
@@ -168,13 +179,14 @@ bing_winner_2022 <- clean_scripts_2022 %>%
   mutate(sentiment = positive - negative)
 
 plot_1 <- ggplot(bing_winner_2022, aes(index, sentiment, fill=movie)) + 
-  geom_bar(stat = "identity") +
-  geom_smooth(span=.15) + 
+  geom_bar(stat = "identity", fill="#CD9600") +
+  geom_smooth(span=.15, fill="#CD9600") + 
   labs(title = "Sentiments through CODA") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5))
+        plot.title = element_text(hjust = 0.5, size=25),
+        axis.title = element_text(size=15))
 
-ggsave("./graphs/sentiment_analysis/bing_sentiments_2022_winner.png", plot_1, 
+ggsave("./graphs/Winner/bing_sentiments_2022_winner.png", plot_1, 
        width = 15, height = 10, dpi=300)
 
 #2021
@@ -190,13 +202,14 @@ bing_winner_2021 <- clean_scripts_2021 %>%
   mutate(sentiment = positive - negative)
 
 plot_1 <- ggplot(bing_winner_2021, aes(index, sentiment, fill=movie)) + 
-  geom_bar(stat = "identity") +
-  geom_smooth(span=.15) + 
+  geom_bar(stat = "identity", fill="#00BE67") +
+  geom_smooth(span=.15, fill="#00BE67") + 
   labs(title = "Sentiments through Nomadland") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5))
+        plot.title = element_text(hjust = 0.5, size=25),
+        axis.title = element_text(size=15))
 
-ggsave("./graphs/sentiment_analysis/bing_sentiments_2021_winner.png", plot_1, 
+ggsave("./graphs/Winner/bing_sentiments_2021_winner.png", plot_1, 
        width = 15, height = 10, dpi=300)
 
 #2020
@@ -212,13 +225,14 @@ bing_winner_2020 <- clean_scripts_2020 %>%
   mutate(sentiment = positive - negative)
 
 plot_1 <- ggplot(bing_winner_2020, aes(index, sentiment, fill=movie)) + 
-  geom_bar(stat = "identity") +
-  geom_smooth(span=.15) + 
+  geom_bar(stat = "identity", fill="#C77CFF") +
+  geom_smooth(span=.15, fill="#C77CFF") + 
   labs(title = "Sentiments through Parasite") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5))
+        plot.title = element_text(hjust = 0.5, size=25),
+        axis.title = element_text(size=15))
 
-ggsave("./graphs/sentiment_analysis/bing_sentiments_2020_winner.png", plot_1, 
+ggsave("./graphs/Winner/bing_sentiments_2020_winner.png", plot_1, 
        width = 15, height = 10, dpi=300)
 
 
@@ -235,13 +249,14 @@ bing_winner_2019 <- clean_scripts_2019 %>%
   mutate(sentiment = positive - negative)
 
 plot_1 <- ggplot(bing_winner_2019, aes(index, sentiment, fill=movie)) + 
-  geom_bar(stat = "identity") +
-  geom_smooth(span=.15) + 
+  geom_bar(stat = "identity", fill="#00C094") +
+  geom_smooth(span=.15, fill="#00C094") + 
   labs(title = "Sentiments through Green Book") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5))
+        plot.title = element_text(hjust = 0.5, size = 25),
+        axis.title = element_text(size = 15))
 
-ggsave("./graphs/sentiment_analysis/bing_sentiments_2019_winner.png", plot_1, 
+ggsave("./graphs/Winner/bing_sentiments_2019_winner.png", plot_1, 
        width = 15, height = 10, dpi=300)
 
 
