@@ -38,7 +38,7 @@ ggplot(., aes(x = Rated, fill = Rated)) +
 
 ggsave("./graphs/metadata_analysis/MPAA_Rating_by_Year.png", plot_1, width = 6, height = 4,dpi=300)
 #####################################################################
-# Release by month, May be receny bias
+# Release by month, May be recency bias
 ######################################################################
 
 movies_df$Date <- strptime(movies_df$Released, format = '%d-%b-%Y')
