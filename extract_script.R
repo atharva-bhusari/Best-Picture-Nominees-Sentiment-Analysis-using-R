@@ -138,3 +138,10 @@ movie_mapping = c('1' = 'Bohemian Rhapsody',
                   '8' = 'Roma')
 
 scripts_2019 = make_scripts(pdf_urls, movie_mapping)
+
+
+write.csv(scripts_2019, "./Data/scripts_2019.csv")
+write.csv(scripts_2020, "./Data/scripts_2020.csv")
+write.csv(scripts_2021, "./Data/scripts_2021.csv")
+write.csv(scripts_2022, "./Data/scripts_2022.csv")
+write.csv(scripts_2023, "./Data/scripts_2023.csv")

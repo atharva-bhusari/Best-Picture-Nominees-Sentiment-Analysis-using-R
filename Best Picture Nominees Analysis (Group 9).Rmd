@@ -1,19 +1,33 @@
+---
+title: "Best Picture Nominees Analysis (Group 9)"
+author: "Atharva Bhusari, Urjit Patil, Nikhil Mishra, Abhinav Saxena"
+date: '2023-04-30'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(tidytext)
 library(ggplot2)
 library(stringr)
 library(lubridate)
 library(wordcloud2)
 library(webshot2)
 library(RColorBrewer)
+```
 
+## Metadata Analysis
 
-
+```{r}
 movies_df <- read.csv("./Data/oscar_movies.csv")
+```
 
-###################################################################
-#  MPAA rating by year
-##################################################################
-plot_1 <- movies_df %>% filter(Rated != "Unrated") %>% 
+### MPAA Ratings by Year
+
+
+```{r}
+movies_df %>% filter(Rated != "Unrated") %>% 
 ggplot(., aes(x = Rated, fill = Rated)) + 
   geom_bar() + 
   facet_wrap(~Year, scales = "free") +
@@ -34,12 +48,12 @@ ggplot(., aes(x = Rated, fill = Rated)) +
         panel.grid.minor = element_blank())  +
   geom_text(stat = "count", aes(label=..count.., y=..count..), 
             position = position_stack(vjust=0.5),size=3)
+```
 
-ggsave("./graphs/metadata_analysis/MPAA_Rating_by_Year.png", plot_1, width = 6, height = 4,dpi=300)
-#####################################################################
-# Release by month, May be recency bias
-######################################################################
 
+###  Release by month
+
+```{r}
 movies_df$Date <- strptime(movies_df$Released, format = '%d-%b-%Y')
 movies_df$Month <- format(movies_df$Date,format='%b')
 
@@ -49,7 +63,7 @@ months_ordered <- c("Jan","Feb","Mar","Apr","May","Jun",
 
 movies_df$Month <- factor(movies_df$Month, levels = months_ordered)
 
-  plot_2 <- ggplot(movies_df, aes(x = Month, fill = Month)) + 
+ggplot(movies_df, aes(x = Month, fill = Month)) + 
   geom_bar() + 
   facet_wrap(~Year, scales = "free") +
   labs(x = "Month of Release", y = "Number of Movies", 
@@ -69,12 +83,11 @@ movies_df$Month <- factor(movies_df$Month, levels = months_ordered)
           panel.grid.minor = element_blank()) + 
   geom_text(stat = "count", aes(label=..count.., y=..count..), 
             position = position_stack(vjust=0.5),size=3)
+```
+### Average Runtime by Year
 
-  ggsave("./graphs//metadata_analysis/Release_by_month.png", plot_2, width = 6, height = 4,dpi=300)
-######################################################################
-## Average Runtime by Year
-#######################################################################
 
+```{r}
 movies_df <- movies_df %>%
     mutate(Runtime = str_replace(Runtime,"min$",""))
 
@@ -83,7 +96,7 @@ movies_df <- movies_df %>%
 
 movies_df$Runtime = as.numeric(movies_df$Runtime)
 
-plot_3<- movies_df %>% group_by(Year) %>% summarise(mean(Runtime)) %>% 
+movies_df %>% group_by(Year) %>% summarise(mean(Runtime)) %>% 
   ggplot(aes(x=Year, y = `mean(Runtime)`)) + 
   geom_bar(stat = "identity", fill = 'steelblue') +
   labs(x="Year", y="Average Runtime", title="Average Runtime by Year") +
@@ -95,16 +108,15 @@ plot_3<- movies_df %>% group_by(Year) %>% summarise(mean(Runtime)) %>%
         axis.text = element_text(color = "white")
   )+
   scale_y_continuous(limits = c(0, 150), breaks = seq(0, 150,by=30))
-ggsave("./graphs//metadata_analysis/Average_Runtime_by_Year.png", plot_3, width = 6, height = 4,dpi=300)
-##############################################################
-## Genre by Year
-################################################################
+```
 
+###  Genre by Year
+
+```{r}
 movies_df$First_Genre <- sapply(strsplit(movies_df$Genre, ","), 
                                 function(x) trimws(x[1]))
 
-
-plot_4 <- ggplot(movies_df, aes(x = First_Genre, fill = First_Genre)) + 
+ggplot(movies_df, aes(x = First_Genre, fill = First_Genre)) + 
   geom_bar() + 
   facet_wrap(~Year, scales = "free") +
   labs(x = "Genre", y = "Number of Movies", 
@@ -124,17 +136,18 @@ plot_4 <- ggplot(movies_df, aes(x = First_Genre, fill = First_Genre)) +
         panel.grid.minor = element_blank())  +
   geom_text(stat = "count", aes(label=..count.., y=..count..), 
             position = position_stack(vjust=0.5),size=3)
-ggsave("./graphs//metadata_analysis/Genre_by_year.png", plot_4, width = 6, height = 4,dpi=300)
-###################################################################
-# Average Metascore by Year
-##################################################################
-#2023
-plot_5 <- movies_df %>% filter(Year == 2022) %>% 
+```
+### Viewer Rating Vs Critic Rating 
+
+#### 2023
+
+```{r}
+movies_df %>% filter(Year == 2022) %>% 
 
 ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
   geom_point(size = 5) +
   scale_color_discrete(guide = guide_legend(title = "Movie Name")) +
-  geom_text(hjust=0.5,vjust=2, size = 5.5) + 
+  geom_text(hjust=0.5,vjust=2, size = 2.8) + 
   labs(x="Critic Rating", y="Viewer Rating",
        title = "Viewer Rating vs Critic Rating for Year 2023") + 
   theme(legend.position = "none", 
@@ -143,17 +156,19 @@ ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
         plot.background = element_rect(fill = "#1b1b1b"),
         axis.title = element_text(size = 15, color='white'),
         axis.text = element_text(color = "white")) + xlim(55,100)
+```
 
-ggsave("./graphs//metadata_analysis/Ctitic_Rating_vs_Viewer_rating_2023.png", 
-       plot_5, width = 10, height = 10,dpi=300)
 
-#2022
-plot_5 <- movies_df %>% filter(Year == 2021) %>% 
+
+#### 2022
+
+```{r}
+movies_df %>% filter(Year == 2021) %>% 
   
   ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
   geom_point(size = 5) +
   scale_color_discrete(guide = guide_legend(title = "Movie Name")) +
-  geom_text(hjust=0.5,vjust=2, size=5.5) + 
+  geom_text(hjust=0.5,vjust=2, size=2.8) + 
   labs(x="Critic Rating", y="Viewer Rating",
        title = "Viewer Rating vs Critic Rating for Year 2022") + 
   theme(legend.position = "none", 
@@ -162,16 +177,17 @@ plot_5 <- movies_df %>% filter(Year == 2021) %>%
         plot.background = element_rect(fill = "#1b1b1b"),
         axis.title = element_text(size = 15, color='white'),
         axis.text = element_text(color = "white")) + xlim(45,100)
+```
 
-ggsave("./graphs/metadata_analysis/Ctitic_Rating_vs_Viewer_rating_2022.png", 
-       plot_5, width = 10, height = 10,dpi=300)
+#### 2021
 
-plot_5 <- movies_df %>% filter(Year == 2020) %>% 
+```{r}
+movies_df %>% filter(Year == 2020) %>% 
   
   ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
   geom_point(size = 5) +
   scale_color_discrete(guide = guide_legend(title = "Movie Name")) +
-  geom_text(hjust=0.5,vjust=2, size=5.5) + 
+  geom_text(hjust=0.5,vjust=2, size=2.8) + 
   labs(x="Critic Rating", y="Viewer Rating",
        title = "Viewer Rating vs Critic Rating for Year 2021") + 
   theme(legend.position = "none", 
@@ -180,16 +196,18 @@ plot_5 <- movies_df %>% filter(Year == 2020) %>%
         plot.background = element_rect(fill = "#1b1b1b"),
         axis.title = element_text(size = 15, color='white'),
         axis.text = element_text(color = "white")) + xlim(45,100)
+```
 
-ggsave("./graphs/metadata_analysis/Ctitic_Rating_vs_Viewer_rating_2021.png", 
-       plot_5, width = 10, height = 10,dpi=300)
 
-plot_5 <- movies_df %>% filter(Year == 2019) %>% 
+#### 2020
+
+```{r}
+movies_df %>% filter(Year == 2019) %>% 
   
   ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
   geom_point(size = 5) +
   scale_color_discrete(guide = guide_legend(title = "Movie Name")) +
-  geom_text(hjust=0.5,vjust=2,size=5.5) + 
+  geom_text(hjust=0.5,vjust=2,size=2.8) + 
   labs(x="Critic Rating", y="Viewer Rating",
        title = "Viewer Rating vs Critic Rating for Year 2020") + 
   theme(legend.position = "none", 
@@ -198,16 +216,18 @@ plot_5 <- movies_df %>% filter(Year == 2019) %>%
         plot.background = element_rect(fill = "#1b1b1b"),
         axis.title = element_text(size = 15, color='white'),
         axis.text = element_text(color = "white")) + xlim(45,100)
+```
 
-ggsave("./graphs/metadata_analysis/Ctitic_Rating_vs_Viewer_rating_2020.png", 
-       plot_5, width = 10, height = 10,dpi=300)
 
-plot_5 <- movies_df %>% filter(Year == 2018) %>% 
+#### 2019
+
+```{r}
+movies_df %>% filter(Year == 2018) %>% 
   
   ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
   geom_point(size = 5) +
   scale_color_discrete(guide = guide_legend(title = "Movie Name")) +
-  geom_text(hjust=0.5,vjust=2,size=5.5) + 
+  geom_text(hjust=0.5,vjust=2,size=2.8) + 
   labs(x="Critic Rating", y="Viewer Rating",
        title = "Viewer Rating vs Critic Rating for Year 2019") + 
   theme(legend.position = "none", 
@@ -216,44 +236,39 @@ plot_5 <- movies_df %>% filter(Year == 2018) %>%
         plot.background = element_rect(fill = "#1b1b1b"),
         axis.title = element_text(size = 15, color='white'),
         axis.text = element_text(color = "white")) + xlim(45,100)
+```
 
-ggsave("./graphs/metadata_analysis/Ctitic_Rating_vs_Viewer_rating_2019.png", 
-       plot_5, width = 10, height = 10,dpi=300)
+#### all movies ploted on one graph
 
-############################################################################
-# Viewer Rating vs Critic Rating for all the nominees
-##############################################################################
 
-plot_5 <- movies_df %>% 
+```{r warning=FALSE}
+movies_df %>% 
   
   ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
   geom_point(size = 5) +
   scale_color_discrete(guide = guide_legend(title = "Movie Name")) +
-  geom_text(hjust=0.5,vjust=2, size = 5.5) + 
+  geom_text(hjust=0.5,vjust=2, size = 2.8) + 
   labs(x="Critic Rating", y="Viewer Rating",
-       title = "Viewer Rating vs Critic Rating for Year 2023") + 
+       title = "Viewer Rating vs Critic Rating for all the Nominees") + 
   theme(legend.position = "none", 
         plot.title = element_text(hjust=0.5, color = 'white'),
         panel.background = element_rect(fill = "#1b1b1b"),
         plot.background = element_rect(fill = "#1b1b1b"),
         axis.title = element_text(size = 15, color='white'),
         axis.text = element_text(color = "white")) + xlim(55,100)
+```
 
-ggsave("./graphs//metadata_analysis/Ctitic_Rating_vs_Viewer_rating_all_nominees.png", 
-       plot_5, width = 10, height = 10,dpi=300)
 
-###################################################################
-# Average box office earning by year
-#################################################################3
+### Average box office earning by year
 
+```{r warning=FALSE}
 movies_df <- movies_df %>% 
   mutate(BoxOffice = str_remove_all(BoxOffice, "[$,]"))
 
 movies_df$BoxOffice <-as.numeric(movies_df$BoxOffice)
 movies_df$BoxOffice <- movies_df$BoxOffice/1000000
 
-
-plot_6 <- movies_df %>% group_by(Year) %>% 
+movies_df %>% group_by(Year) %>% 
   summarise(mean(BoxOffice, na.rm=TRUE)) %>% 
   ggplot(aes(x=Year, y = `mean(BoxOffice, na.rm = TRUE)`, fill=Year)) + 
   geom_line(stat = "identity", aes(col="#F71707"), size=1.5) + 
@@ -266,18 +281,17 @@ plot_6 <- movies_df %>% group_by(Year) %>%
         plot.background = element_rect(fill = "#1b1b1b"),
         axis.title = element_text(size = 15, color='white'),
         axis.text = element_text(color = "white"))
-ggsave("./graphs/metadata_analysis/Average_box_office_earing_by_year.png", 
-       plot_6, width = 10, height = 10,dpi=300)
-###################################################################
-# Average imdb votes per year
-###############################################################
+```
 
+### Average imdb votes per year
+
+```{r}
 movies_df <- movies_df %>% 
   mutate(imdbVotes = str_remove_all(imdbVotes, "[,]"))
 movies_df$imdbVotes <- as.numeric(movies_df$imdbVotes)
 movies_df$imdbVotes <- movies_df$imdbVotes/100000
 
-plot_7 <- movies_df %>% group_by(Year) %>% 
+movies_df %>% group_by(Year) %>% 
   summarise(mean(imdbVotes, na.rm=TRUE)) %>% 
   ggplot(aes(x=Year, y = `mean(imdbVotes, na.rm = TRUE)`, fill=Year)) + 
   geom_line(stat = "identity", aes(col="red"), size=1.5) + 
@@ -290,35 +304,296 @@ plot_7 <- movies_df %>% group_by(Year) %>%
         plot.background = element_rect(fill = "#1b1b1b"),
         axis.title = element_text(size = 15, color='white'),
         axis.text = element_text(color = "white"))
-ggsave("./graphs/metadata_analysis/Average_box_imdb_votes_per_year.png", 
-       plot_7, width = 10, height = 10,dpi=300)
-#############################################################
-# Language analysis
-############################################################
+```
 
+
+
+### Language analysis
+
+```{r}
 df_split <- separate_rows(movies_df, Language, sep = ", ")
 df_count <- count(df_split, Language)
-print(df_count)
 
 wordcloud2(
   df_count %>% filter(Language != "English"),
   rotateRatio = 0,
   shape = "cicle"
 )
-
-export_png("./graphs/metadata_analysis/language_wordcloud.png", delay=5)
-
+```
 
 
 
+## Sentiment Analysis
+
+```{r}
+scripts_2019 <- read.csv("./Data/scripts_2019.csv")
+scripts_2020 <- read.csv("./Data/scripts_2020.csv")
+scripts_2021 <- read.csv("./Data/scripts_2021.csv")
+scripts_2022 <- read.csv("./Data/scripts_2022.csv")
+scripts_2023 <- read.csv("./Data/scripts_2023.csv")
+
+```
+
+
+### Cleaning Scripts
+
+```{r message=FALSE}
+clean_scripts_2023 <- scripts_2023 %>% unnest_tokens(word, line) %>% 
+  mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
+  anti_join(stop_words)
+
+clean_scripts_2022 <- scripts_2022 %>% unnest_tokens(word, line) %>% 
+  mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
+  anti_join(stop_words)
+
+clean_scripts_2021 <- scripts_2021 %>% unnest_tokens(word, line) %>% 
+  mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
+  anti_join(stop_words)
+
+clean_scripts_2020 <- scripts_2020 %>% unnest_tokens(word, line) %>% 
+  mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
+  anti_join(stop_words)
+
+clean_scripts_2019 <- scripts_2019 %>% unnest_tokens(word, line) %>% 
+  mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
+  anti_join(stop_words)
+
+```
+
+
+### Analysis using Bing Lexicon
+
+#### 2023
+
+```{r warning=FALSE, message=FALSE}
+bing_scripts_2023 <- clean_scripts_2023 %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 10) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  mutate(sentiment = positive - negative)
+
+ggplot(bing_scripts_2023, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity") + facet_wrap(~movie, ncol=2) +
+  geom_smooth(span=.15)+ 
+  labs(title = "Sentiments through the Movies of 2023") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+```
+
+#### 2022
+
+```{r warning=FALSE, message=FALSE}
+bing_scripts_2022 <- clean_scripts_2022 %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 10) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  mutate(sentiment = positive - negative)
+
+ggplot(bing_scripts_2022, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity") + facet_wrap(~movie, ncol=2) +
+  geom_smooth(span=.15) + 
+  labs(title = "Sentiments through the Movies of 2022") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+```
+
+
+
+#### 2021
+
+```{r warning=FALSE, message=FALSE}
+bing_scripts_2021 <- clean_scripts_2021 %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 10) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  mutate(sentiment = positive - negative)
+
+ggplot(bing_scripts_2021, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity") + facet_wrap(~movie, ncol=2) +
+  geom_smooth(span=.15) + 
+  labs(title = "Sentiments through the Movies of 2021") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+```
+
+
+
+
+#### 2020
+
+
+```{r warning=FALSE, message=FALSE}
+
+bing_scripts_2020 <- clean_scripts_2020 %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 10) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  mutate(sentiment = positive - negative)
+
+ggplot(bing_scripts_2020, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity") + facet_wrap(~movie, ncol=2) +
+  geom_smooth(span=.15)+ 
+  labs(title = "Sentiments through the Movies of 2020") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+```
 
 
 
 
 
+#### 2019
+
+```{r warning=FALSE, message=FALSE}
+bing_scripts_2019 <- clean_scripts_2019 %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 10) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  mutate(sentiment = positive - negative)
+
+
+ggplot(bing_scripts_2019, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity") + facet_wrap(~movie, ncol=2) +
+  geom_smooth(span=.15)+ 
+  labs(title = "Sentiments through the Movies of 2019") +
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust=0.5))
+```
 
 
 
 
+#######################################################
+## Drilling down to winning movies
+##########################################################
+
+
+
+#### 2023
+
+```{r message=FALSE}
+bing_winner_2023 <- clean_scripts_2023 %>% 
+  filter(movie=="Everything Everywhere All at Once") %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 25) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  replace_na(.,list(positive=0, negative=0)) %>% 
+  mutate(sentiment = positive - negative)
+
+
+
+ggplot(bing_winner_2023, aes(index, sentiment)) + 
+  geom_bar(stat = "identity", fill="#93AA00") +
+  geom_smooth(span=.15, fill="#93AA00") + 
+  labs(title = "Sentiments through Everything Everywhere All at Once") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+```
+
+#### 2022
+
+```{r message=FALSE}
+
+bing_winner_2022 <- clean_scripts_2022 %>% 
+  filter(movie=="CODA") %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 15) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  replace_na(.,list(positive=0, negative=0)) %>% 
+  mutate(sentiment = positive - negative)
+
+
+ggplot(bing_winner_2022, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity", fill="#CD9600") +
+  geom_smooth(span=.15, fill="#CD9600") + 
+  labs(title = "Sentiments through CODA") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+
+```
+
+
+#### 2021
+
+```{r message=FALSE}
+
+bing_winner_2021 <- clean_scripts_2021 %>% 
+  filter(movie=="Nomadland") %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 15) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  replace_na(.,list(positive=0, negative=0)) %>% 
+  mutate(sentiment = positive - negative)
+
+ggplot(bing_winner_2021, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity", fill="#00BE67") +
+  geom_smooth(span=.15, fill="#00BE67") + 
+  labs(title = "Sentiments through Nomadland") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+
+```
+
+#### 2020
+
+
+```{r message=FALSE}
+bing_winner_2020 <- clean_scripts_2020 %>% 
+  filter(movie=="Parasite") %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 20) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  replace_na(.,list(positive=0, negative=0)) %>% 
+  mutate(sentiment = positive - negative)
+
+ggplot(bing_winner_2020, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity", fill="#C77CFF") +
+  geom_smooth(span=.15, fill="#C77CFF") + 
+  labs(title = "Sentiments through Parasite") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+```
+
+
+
+#### 2019
+
+```{r message=FALSE}
+bing_winner_2019 <- clean_scripts_2019 %>% 
+  filter(movie=="Green Book") %>% 
+  inner_join(get_sentiments("bing")) %>%
+  group_by(movie) %>% 
+  mutate(index = row_number() %/% 15) %>% 
+  count(movie, index, sentiment) %>% 
+  pivot_wider(names_from = "sentiment", values_from = "n") %>%
+  replace_na(.,list(positive=0, negative=0)) %>% 
+  mutate(sentiment = positive - negative)
+
+
+ggplot(bing_winner_2019, aes(index, sentiment, fill=movie)) + 
+  geom_bar(stat = "identity", fill="#00C094") +
+  geom_smooth(span=.15, fill="#00C094") + 
+  labs(title = "Sentiments through Green Book") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+```
 
 
