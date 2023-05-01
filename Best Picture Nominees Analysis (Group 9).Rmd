@@ -1,12 +1,10 @@
 ---
 title: "Best Picture Nominees Analysis (Group 9)"
 author: "Atharva Bhusari, Urjit Patil, Nikhil Mishra, Abhinav Saxena"
-date: '2023-04-30'
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(tidytext)
 library(ggplot2)
@@ -21,15 +19,15 @@ library(RColorBrewer)
 
 The metadata has been extracted using the OMDb API. The API allows users to retrieve information such as movie titles, actors, release dates, ratings, plot summaries, posters, and more. The API requires an API key to access its data, which can be obtained by registering on the OMDb website. The extracted metadata for the Best Picture nominees for the last 5 years was stored in csv format.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 movies_df <- read.csv("./Data/oscar_movies.csv")
 ```
 
-##### **1.1 MPAA Ratings by Year**
+#### **1.1 MPAA Ratings by Year**
 
 MPAA rating stands for Motion Picture Association of America rating, which is a classification system for films based on their content. The MPAA rating system is used primarily in the United States, and it is designed to provide information to parents about the suitability of a film for their children. The MPAA ratings are: G (General Audiences), PG (Parental Guidance Suggested), PG-13 (Parents Strongly Cautioned), R (Restricted), and NC-17 (No Children Under 17 Admitted).
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 movies_df %>% filter(Rated != "Unrated") %>% 
 ggplot(., aes(x = Rated, fill = Rated)) + 
   geom_bar() + 
@@ -55,9 +53,9 @@ ggplot(., aes(x = Rated, fill = Rated)) +
 
 According to the plot, the movies with a MPAA Rating of R have the largest count of best picture nominations. They are followed by movies with a PG-13 rating. There is only one instance of a movie with a rating of PG to be nominated for Best Picture which was Little Women in 2019.
 
-##### **1.2 Release Month by Year**
+#### **1.2 Release Month by Year**
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 movies_df$Date <- strptime(movies_df$Released, format = '%d-%b-%Y')
 movies_df$Month <- format(movies_df$Date,format='%b')
 
@@ -91,9 +89,9 @@ ggplot(movies_df, aes(x = Month, fill = Month)) +
 
 A large percentage of the movies that have been nominated for Best Picture in the last five years have been released in the last quarter of the year. A possible reason for this could be recency bias.
 
-##### **1.3 Average Runtime by Year**
+#### **1.3 Average Runtime by Year**
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 movies_df <- movies_df %>%
     mutate(Runtime = str_replace(Runtime,"min$",""))
 
@@ -116,11 +114,11 @@ movies_df %>% group_by(Year) %>% summarise(mean(Runtime)) %>%
   scale_y_continuous(limits = c(0, 150), breaks = seq(0, 150,by=30))
 ```
 
-Every year except 2020 had an average run time  greater than 120 minutes.
+Every year except 2020 had an average runtime  greater than 120 minutes.
 
-##### **1.4 Genre by Year**
+#### **1.4 Genre by Year**
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 movies_df$First_Genre <- sapply(strsplit(movies_df$Genre, ","), 
                                 function(x) trimws(x[1]))
 
@@ -148,11 +146,13 @@ ggplot(movies_df, aes(x = First_Genre, fill = First_Genre)) +
 
 There can be seen a new genre with the most movies nominated for most of the years. However, the genre drama can be seen present with at least two movies every year.
 
-##### **1.5 Viewer Rating vs Critic Rating** 
+#### **1.5 Viewer Rating vs Critic Rating** 
 
 The Viewer Rating vs Critic Rating plots have been used to study the relationship between both ratings and the winner for the Best Picture category every year.
 
-```{r}
+##### **1.5.1 Best Picture Nominees - 2023**
+
+```{r, warning=FALSE, message=FALSE}
 movies_df %>% filter(Year == 2022) %>% 
 
 ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
@@ -171,7 +171,9 @@ ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
 
 Although there were other movies with a better Critic Rating and Viewer Rating, Everything Everywhere All at Once won the award for the Best Picture with an almost average rating on both fronts when compared to the other nominees. 
 
-```{r}
+##### **1.5.2 Best Picture Nominees - 2022**
+
+```{r, warning=FALSE, message=FALSE}
 movies_df %>% filter(Year == 2021) %>% 
   
   ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
@@ -190,7 +192,9 @@ movies_df %>% filter(Year == 2021) %>%
 
 The year 2022 saw CODA win the award for the Best Picture with the highest Viewer Rating alongside Dune even though Dune had a slightly higher Critic Rating. However, there were several other nominees that had a better Critic Rating but a worse Viewer Rating with respect to CODA.
 
-```{r}
+##### **1.5.3 Best Picture Nominees - 2021**
+
+```{r, warning=FALSE, message=FALSE}
 movies_df %>% filter(Year == 2020) %>% 
   
   ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
@@ -209,7 +213,9 @@ movies_df %>% filter(Year == 2020) %>%
 
 Nomadland won the award for the Best Picture in 2021 with the highest Critic Rating. However, all the other nominees bar Mank had a better Viewer Rating than Nomadland.
 
-```{r}
+##### **1.5.4 Best Picture Nominees - 2020**
+
+```{r, warning=FALSE, message=FALSE}
 movies_df %>% filter(Year == 2019) %>% 
   
   ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
@@ -228,7 +234,9 @@ movies_df %>% filter(Year == 2019) %>%
 
 Parasite won the award for the Best Picture in 2020 with the best Viewer Rating and the best Critic Rating, unlike all the other years in consideration. This is the ideal candidate for the Best Picture winner as both the Critics and the Viewers highly rated the movie.
 
-```{r}
+##### **1.5.5 Best Picture Nominees - 2019**
+
+```{r, warning=FALSE, message=FALSE}
 movies_df %>% filter(Year == 2018) %>% 
   
   ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
@@ -247,7 +255,7 @@ movies_df %>% filter(Year == 2018) %>%
 
 Green Book won the award for the Best Picture in 2019 with the highest Viewer Rating but a below average Critic Rating with respect to the other nominees that year.
 
-```{r warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 movies_df %>% 
   ggplot(., aes(x = Metascore, y = imdbRating, label = Title, color = Title)) +
   geom_point(size = 5) +
@@ -263,11 +271,12 @@ movies_df %>%
         axis.text = element_text(color = "white")) + xlim(55,100)
 ```
 
-According to the suggestion received during the project presentation, the plot above has all the Best Picture nominees for the years in consideration. However, the reason for creating separate plots for each year was to emphasize on the relation between the Critic Rating and the Viewer Rating which is not visible when all the plots are combined into one. Also, when all the plots are combined into one, the points on the plot are indistinguishable.
+According to the suggestion received during the project presentation, the plot above has all the Best Picture nominees for the years in consideration.<br>
+However, the reason for creating separate plots for each year was to emphasize on the relation between the Critic Rating and the Viewer Rating which is not visible when all the plots are combined into one. Also, when all the plots are combined into one, the points on the plot are indistinguishable.
 
-##### **1.6 Average Box Office earning by Year**
+#### **1.6 Average Box Office earning by Year**
 
-```{r warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 movies_df <- movies_df %>% 
   mutate(BoxOffice = str_remove_all(BoxOffice, "[$,]"))
 
@@ -291,9 +300,9 @@ movies_df %>% group_by(Year) %>%
 
 The Box Office earning dropped significantly during 2020 because of COVID and can be seen on the rise again throughout 2021 and 2022.
 
-##### **1.7 Average IMDb votes per Year**
+#### **1.7 Average IMDb votes per Year**
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 movies_df <- movies_df %>% 
   mutate(imdbVotes = str_remove_all(imdbVotes, "[,]"))
 movies_df$imdbVotes <- as.numeric(movies_df$imdbVotes)
@@ -317,9 +326,9 @@ movies_df %>% group_by(Year) %>%
 The number of votes on IMDb can be linked to the popularity of the movie. The viewers submit a rating out of 10 also known as a vote for the movies that they have seen. Therefore, a high average number of votes for the year may indicate that the Best Picture nominees for that year were popular among the viewers.<br>
 The popularity for the Best Picture nominees dropped in 2020 and can be seen rising slowly in the following years.
 
-##### **1.8 Popular Languages for the Best Picture nominees**
+#### **1.8 Popular Languages for the Best Picture nominees**
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 df_split <- separate_rows(movies_df, Language, sep = ", ")
 df_count <- count(df_split, Language)
 
@@ -338,7 +347,7 @@ Some not so usual languages such as American Sign Language and British Sign Lang
 The screenplays for the Best Picture nominees were available in PDF format and had to be converted into text format before being stored as csv files. An additional column indicating the name of the movie was also added to the csv along with the text present in the screenplay.<br>
 The extraction and conversion of the screenplays into csv files involved development of R scripts to for the same. 
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 scripts_2019 <- read.csv("./Data/scripts_2019.csv")
 scripts_2020 <- read.csv("./Data/scripts_2020.csv")
 scripts_2021 <- read.csv("./Data/scripts_2021.csv")
@@ -347,11 +356,11 @@ scripts_2023 <- read.csv("./Data/scripts_2023.csv")
 
 ```
 
-##### **2.1 Screenplay Cleaning**
+#### **2.1 Screenplay Cleaning**
 
 The cleaning of the screenplays involved unnesting the lines and the removal of stop words and NAs.
 
-```{r message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 clean_scripts_2023 <- scripts_2023 %>% unnest_tokens(word, line) %>% 
   mutate(word = str_extract(word, "[a-z]+")) %>% filter(word != 'NA') %>% 
   anti_join(stop_words)
@@ -374,9 +383,13 @@ clean_scripts_2019 <- scripts_2019 %>% unnest_tokens(word, line) %>%
 
 ```
 
-##### **2.2 Sentiment Analysis using the Bing Lexicon**
+#### **2.2 Sentiment Analysis using the Bing Lexicon**
 
-```{r warning=FALSE, message=FALSE}
+The gross sentiment throughout the duration of the movie was determined by plotting the difference between the positive and the negative sentiment using the Bing Lexicon.
+
+##### **2.2.1 Best Picture Nominees - 2023**
+
+```{r, warning=FALSE, message=FALSE}
 bing_scripts_2023 <- clean_scripts_2023 %>% 
   inner_join(get_sentiments("bing")) %>%
   group_by(movie) %>% 
@@ -393,9 +406,9 @@ ggplot(bing_scripts_2023, aes(index, sentiment, fill=movie)) +
         plot.title = element_text(hjust = 0.5))
 ```
 
+##### **2.2.2 Best Picture Nominees - 2022**
 
-
-```{r warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 bing_scripts_2022 <- clean_scripts_2022 %>% 
   inner_join(get_sentiments("bing")) %>%
   group_by(movie) %>% 
@@ -412,9 +425,9 @@ ggplot(bing_scripts_2022, aes(index, sentiment, fill=movie)) +
         plot.title = element_text(hjust = 0.5))
 ```
 
+##### **2.2.3 Best Picture Nominees - 2021**
 
-
-```{r warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 bing_scripts_2021 <- clean_scripts_2021 %>% 
   inner_join(get_sentiments("bing")) %>%
   group_by(movie) %>% 
@@ -431,9 +444,9 @@ ggplot(bing_scripts_2021, aes(index, sentiment, fill=movie)) +
         plot.title = element_text(hjust = 0.5))
 ```
 
+##### **2.2.4 Best Picture Nominees - 2020**
 
-
-```{r warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 
 bing_scripts_2020 <- clean_scripts_2020 %>% 
   inner_join(get_sentiments("bing")) %>%
@@ -451,9 +464,9 @@ ggplot(bing_scripts_2020, aes(index, sentiment, fill=movie)) +
         plot.title = element_text(hjust = 0.5))
 ```
 
+##### **2.2.5 Best Picture Nominees - 2019**
 
-
-```{r warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 bing_scripts_2019 <- clean_scripts_2019 %>% 
   inner_join(get_sentiments("bing")) %>%
   group_by(movie) %>% 
@@ -471,9 +484,15 @@ ggplot(bing_scripts_2019, aes(index, sentiment, fill=movie)) +
         plot.title = element_text(hjust=0.5))
 ```
 
-##### **2.3 Drilling down into winners by Year**
+A majority of the nominees for all five years under consideration have a negative sentiment throughout the movie. This may be associated with Drama being the most common genre throughout the years as seen from section 1.4.<br>
+The other most prominent trend that is visible is the movies having a negative sentiment for the entire length of the  movie but then the sentiment turning to positive at the end of the movie.<br>
+All Quiet on the Western Front and 1917 being movies based on war can be seen having a negative sentiment throughout the entire duration of the movie. Another example of the same is Joker, which is not a war movie but has a plot that is "darker" than most movies, hence the negative sentiment throughout with a higher magnitude than most.
 
-```{r message=FALSE}
+#### **2.3 Drilling down into winners by Year**
+
+##### **2.3.1 Best Picture Winner - 2023**
+
+```{r, warning=FALSE, message=FALSE}
 bing_winner_2023 <- clean_scripts_2023 %>% 
   filter(movie=="Everything Everywhere All at Once") %>% 
   inner_join(get_sentiments("bing")) %>%
@@ -494,9 +513,9 @@ ggplot(bing_winner_2023, aes(index, sentiment)) +
         plot.title = element_text(hjust = 0.5))
 ```
 
+##### **2.3.2 Best Picture Winner - 2022**
 
-
-```{r message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 
 bing_winner_2022 <- clean_scripts_2022 %>% 
   filter(movie=="CODA") %>% 
@@ -518,9 +537,9 @@ ggplot(bing_winner_2022, aes(index, sentiment, fill=movie)) +
 
 ```
 
+##### **2.3.3 Best Picture Winner - 2021**
 
-
-```{r message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 
 bing_winner_2021 <- clean_scripts_2021 %>% 
   filter(movie=="Nomadland") %>% 
@@ -541,9 +560,9 @@ ggplot(bing_winner_2021, aes(index, sentiment, fill=movie)) +
 
 ```
 
+##### **2.3.4 Best Picture Winner - 2020**
 
-
-```{r message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 bing_winner_2020 <- clean_scripts_2020 %>% 
   filter(movie=="Parasite") %>% 
   inner_join(get_sentiments("bing")) %>%
@@ -562,9 +581,9 @@ ggplot(bing_winner_2020, aes(index, sentiment, fill=movie)) +
         plot.title = element_text(hjust = 0.5))
 ```
 
+##### **2.3.5 Best Picture Winner - 2019**
 
-
-```{r message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 bing_winner_2019 <- clean_scripts_2019 %>% 
   filter(movie=="Green Book") %>% 
   inner_join(get_sentiments("bing")) %>%
@@ -583,3 +602,5 @@ ggplot(bing_winner_2019, aes(index, sentiment, fill=movie)) +
   theme(legend.position = "none",
         plot.title = element_text(hjust = 0.5))
 ```
+
+The sentiment plots for the winners show that four out of the five winners under consideration have a gross negative sentiment throughout the movie, but the ending of these movies has a positive sentiment. The only movie among those under consideration that does not display this trend in the 2021 winner Nomadland.
