@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 *.Rproj
+analysis_script.R
+movie_metadata_analysis.R
