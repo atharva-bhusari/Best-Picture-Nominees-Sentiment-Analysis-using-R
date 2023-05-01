@@ -231,7 +231,7 @@ plot_5 <- movies_df %>%
   scale_color_discrete(guide = guide_legend(title = "Movie Name")) +
   geom_text(hjust=0.5,vjust=2, size = 5.5) + 
   labs(x="Critic Rating", y="Viewer Rating",
-       title = "Viewer Rating vs Critic Rating for Year 2023") + 
+       title = "Viewer Rating vs Critic Rating for all nominees") + 
   theme(legend.position = "none", 
         plot.title = element_text(hjust=0.5, color = 'white'),
         panel.background = element_rect(fill = "#1b1b1b"),
